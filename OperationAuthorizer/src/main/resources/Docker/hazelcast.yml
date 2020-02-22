@@ -1,0 +1,24 @@
+version: '3'
+services:
+  authorizer:
+  # Our dockerized Java client
+    build: 
+      context: ../../../../.
+    network_mode: host  
+    stdin_open: true    
+    depends_on:
+        - hazelcast
+    volumes:
+        - ../../resources:/configFolder
+    
+
+  # Hazelcast imdg
+  hazelcast:
+    image: hazelcast/hazelcast
+    volumes:
+        - ../../resources:/configFolder
+    environment:
+        - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dgroup.name=hz-compose -Dgroup.password=s3crEt
+    ports:
+        - 5701:5701
+    

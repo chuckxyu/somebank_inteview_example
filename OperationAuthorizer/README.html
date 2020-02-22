@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authorizer</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="coding-challenge---authorizer">Coding Challenge - Authorizer</h1>
+<h2 id="description">Description</h2>
+<p><strong>OperationAuthorizer.zip</strong> is the compressed file containing a maven project which at his resources presents the necessary artifacts to <em>dockerize</em> the build and the execution environment<br>
+to test with input from stdin.</p>
+<p><img src="https://i.imgur.com/ULUbBqJ.jpg" alt="Java Project"></p>
+<h2 id="instructions">Instructions</h2>
+<ol>
+<li>Download <strong>OperationAuthorizer.zip</strong></li>
+<li>Extract files from <strong>OperationAuthorizer.zip</strong></li>
+<li>Go to resources directory project and into Docker:<br>
+<code>cd src/main/resources/Docker</code></li>
+<li>Run the script file <strong><a href="http://runDockerCompose.sh">runDockerCompose.sh</a></strong> and wait for it to be finish<br>
+<code>sh runDockerCompose.sh</code></li>
+<li>test!</li>
+</ol>
+<p>*see the video:<br>
+<a href="https://youtu.be/Nyu9sXy65oo">https://youtu.be/Nyu9sXy65oo</a></p>
+<h2 id="design">Design</h2>
+<p><img src="https://i.imgur.com/qHqx6VX.jpg" alt="First notes on the requirements and design decisions"></p>
+<p>As I usually do with any task that involves order, results or learning, I wrote some hints to help me understand what I have to accomplish.</p>
+<p>At first I wrote down statements about the solution as the InMemory structure required and the operations to be authorized and some details about inputs and outputs to imagine whats the behavior for data.</p>
+<p>I sketched a DB (listed: redis) that represents the InMemory requirement and something that I have to build to get and set Operations from (listed: Java, spring-boot, scala)</p>
+<p>On later reading, I decided to go with full Java 8, in order to get a basic working program to read from stdin and process it, also to keep it simple.</p>
+<p>The build tool I use for this is maven because its simplicity and the dependencies are easily managed.</p>
+<p>I also decide to include as an option Hazelcast due to it scability:</p>
+<p>Hazelcast IMDG supports unlimited number of maps and caches per cluster.</p>
+<p>I marked that last part in blue as Client, as that’s the concept to be coded.</p>
+<p>Also in blue put some lines marking the sketch with the different componentes needed:</p>
+<ul>
+<li>InMemory db “server”</li>
+<li>Authorizer: the use of a client to validate and persist operations at<br>
+the InMemory DB.</li>
+</ul>
+<p>As final part of the notes, I decide to make a list of models to serialize and manage the operations, but then decided to keep it to Strings and Json objects.</p>
+<p>From this I started creating the following flow using docker-compose with hazelcast image as inmemory backend and a basic maven project to test client capabilities:</p>
+<div class="mermaid"><svg xmlns="http://www.w3.org/2000/svg" id="mermaid-svg-WJxasBWrJMPcwzzr" height="100%" width="100%" style="max-width:675px;" viewBox="-75 -10 675 566"><g></g><g><line id="actor9" x1="75" y1="5" x2="75" y2="555" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="0" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle;"><tspan x="75" dy="0">Authorizer main()</tspan></text></g><g><line id="actor10" x1="275" y1="5" x2="275" y2="555" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="200" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="275" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle;"><tspan x="275" dy="0">Client</tspan></text></g><g><line id="actor11" x1="475" y1="5" x2="475" y2="555" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="400" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="475" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle;"><tspan x="475" dy="0">Hazelcast</tspan></text></g><defs><marker id="arrowhead" refX="5" refY="2" markerWidth="6" markerHeight="4" orient="auto"><path d="M 0,0 V 4 L6,2 Z"></path></marker></defs><defs><marker id="crosshead" markerWidth="15" markerHeight="8" orient="auto" refX="16" refY="4"><path fill="black" stroke="#000000" stroke-width="1px" d="M 9,2 V 6 L16,4 Z" style="stroke-dasharray: 0, 0;"></path><path fill="none" stroke="#000000" stroke-width="1px" d="M 0,1 L 6,7 M 6,1 L 0,7" style="stroke-dasharray: 0, 0;"></path></marker></defs><g><text x="175" y="93" class="messageText" style="text-anchor: middle;">new Client()</text><line x1="75" y1="100" x2="275" y2="100" class="messageLine0" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="fill: none;"></line></g><g><text x="275" y="128" class="messageText" style="text-anchor: middle;">INIT CLIENT CONFIG</text><path d="M 275,135 C 335,125 335,165 275,155" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></path></g><g><text x="175" y="193" class="messageText" style="text-anchor: middle;">Clear()</text><line x1="75" y1="200" x2="275" y2="200" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line></g><g><text x="375" y="228" class="messageText" style="text-anchor: middle;">CLEAR MAP</text><line x1="275" y1="235" x2="475" y2="235" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line></g><g><text x="75" y="263" class="messageText" style="text-anchor: middle;">READS STDIN</text><path d="M 75,270 C 135,260 135,300 75,290" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></path></g><g><text x="175" y="328" class="messageText" style="text-anchor: middle;">setOperation(stdin)</text><line x1="75" y1="335" x2="275" y2="335" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line></g><g><text x="275" y="363" class="messageText" style="text-anchor: middle;">PROCESS</text><path d="M 275,370 C 335,360 335,400 275,390" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></path></g><g><text x="375" y="428" class="messageText" style="text-anchor: middle;">SET DATA</text><line x1="275" y1="435" x2="475" y2="435" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line></g><g><text x="175" y="463" class="messageText" style="text-anchor: middle;">RESULT</text><line x1="275" y1="470" x2="75" y2="470" class="messageLine1" stroke-width="2" stroke="black" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line></g><g><rect x="0" y="490" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="522.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle;"><tspan x="75" dy="0">Authorizer main()</tspan></text></g><g><rect x="200" y="490" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="275" y="522.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle;"><tspan x="275" dy="0">Client</tspan></text></g><g><rect x="400" y="490" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="475" y="522.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle;"><tspan x="475" dy="0">Hazelcast</tspan></text></g></svg></div>
+<p>After testing with inputs from the original spec, I include the application to the compose definition creating a docker image that uses maven and java from public images to build and run inside the same docker env.</p>
+</div>
+</body>
+
+</html>
